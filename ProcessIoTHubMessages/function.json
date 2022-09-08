@@ -4,7 +4,7 @@
       "type": "eventHubTrigger",
       "name": "IoTHubMessages",
       "direction": "in",
-      "eventHubName": "",
+      "eventHubName": "%aruba_iot_event_hub_name%",
       "connection": "EventHubConnectionString",
       "cardinality": "many",
       "consumerGroup": "$Default",

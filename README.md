@@ -4,6 +4,24 @@ aruba-iot-advlib-azure-function
 Process IoT data forwarded to Azure by Aruba APs using [advlib](https://github.com/reelyactive/advlib) packet decoding libraries.
 
 
+local.settings.json
+-------------------
+
+If running locally, a local.settings.json file should be included in the root folder of this repository, with the following contents:
+
+    {
+      "IsEncrypted": false,
+      "Values": {
+        "FUNCTIONS_WORKER_RUNTIME": "node",
+        "AzureWebJobsStorage": "...",
+        "EventHubConnectionString": "...",
+        "aruba_iot_event_hub_name": "..."
+      }
+    }
+
+Replace the "..." values with the appropriate strings from the Azure Portal.
+
+
 License
 -------
 
