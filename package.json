@@ -1,0 +1,35 @@
+{
+  "name": "aruba-iot-advlib-azure-function",
+  "homepage": "https://www.reelyactive.com",
+  "author": {
+    "name": "reelyActive",
+    "email": "info@reelyactive.com"
+  },
+  "description": "Process IoT data forwarded to Azure by Aruba APs using advlib packet decoding libraries.  We believe in an open Internet of Things.",
+  "keywords": [
+    "IoT",
+    "Aruba",
+    "Azure",
+    "IoT Hub",
+    "advlib"
+  ],
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reelyactive/aruba-iot-advlib-azure-function.git"
+  },
+  "scripts": {
+    "start": "func start"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "azure-functions-core-tools": "^4.x"
+  },
+  "bugs": {
+    "url": "https://github.com/reelyactive/aruba-iot-advlib-azure-function/issues"
+  },
+  "contributors": [
+    { "name": "Jeffrey Dungen" }
+  ],
+  "license": "MIT"
+}
