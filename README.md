@@ -1,7 +1,18 @@
 aruba-iot-advlib-azure-function
 ===============================
 
-Process IoT data forwarded to Azure by Aruba APs using [advlib](https://github.com/reelyactive/advlib) packet decoding libraries.
+Process IoT data forwarded to Azure by Aruba APs using [advlib](https://github.com/reelyactive/advlib) packet decoding libraries, specifically:
+- [advlib-esp](https://github.com/reelyactive/advlib) for EnOcean Alliance devices
+
+The processed data will observe the [advlib Standard Properties](https://github.com/reelyactive/advlib#standard-properties), fostering vendor-and-technology-agnostic interoperability.
+
+
+Installation
+------------
+
+For local operation, clone this repository and then install the package dependencies with the following command:
+
+    npm install
 
 
 local.settings.json
@@ -19,7 +30,15 @@ If running locally, a local.settings.json file should be included in the root fo
       }
     }
 
-Replace the "..." values with the appropriate strings from the Azure Portal.
+Replace the ```"..."``` values with the appropriate strings from the Azure Portal.
+
+
+Running locally
+---------------
+
+With the Azure CLI installed, run the __aruba-iot-advlib-azure-function__ locally from its root folder with the following command:
+
+    func start
 
 
 License
