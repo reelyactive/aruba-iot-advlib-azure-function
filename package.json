@@ -21,7 +21,9 @@
   "scripts": {
     "start": "func start"
   },
-  "dependencies": {},
+  "dependencies": {
+    "advlib-esp": "^1.0.0"
+  },
   "devDependencies": {
     "azure-functions-core-tools": "^4.x"
   },
