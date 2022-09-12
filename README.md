@@ -2,7 +2,8 @@ aruba-iot-advlib-azure-function
 ===============================
 
 Process IoT data forwarded to Azure by Aruba APs using [advlib](https://github.com/reelyactive/advlib) packet decoding libraries, specifically:
-- [advlib-esp](https://github.com/reelyactive/advlib) for EnOcean Alliance devices
+- [advlib-ble](https://github.com/reelyactive/advlib-ble) for Bluetooth Low Energy devices
+- [advlib-esp](https://github.com/reelyactive/advlib-esp) for EnOcean Alliance devices
 
 The processed data will observe the [advlib Standard Properties](https://github.com/reelyactive/advlib#standard-properties), fostering vendor-and-technology-agnostic interoperability.
 
