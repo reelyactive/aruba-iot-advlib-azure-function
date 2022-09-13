@@ -11,7 +11,7 @@ const BLE_PROCESSORS = [
     { processor: require('advlib-ble'),
       libraries: [ require('advlib-ble-services'),
                    require('advlib-ble-manufacturers') ],
-      options: { ignoreProtocolOverhead: true,
+      options: { isPayloadOnly: true,
                  indices: [ require('sniffypedia') ] } }
 ];
 const ENOCEAN_PROCESSORS = [
