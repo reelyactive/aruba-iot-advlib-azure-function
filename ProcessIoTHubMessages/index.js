@@ -33,6 +33,7 @@ module.exports = function(context, IoTHubMessages) {
         let payload = Buffer.from(packet.data, 'base64');
         let processedPayload = advlib.process(payload, BLE_PROCESSORS,
                                               INTERPRETERS);
+        context.bindings.outputEventHubMessage = JSON.stringify(processedPayload);
       });
     }
 
@@ -41,6 +42,7 @@ module.exports = function(context, IoTHubMessages) {
       message.serialData.forEach(packet => {
         let payload = Buffer.from(packet.data, 'base64');
         let processedPayload = advlib.process(payload, ENOCEAN_PROCESSORS);
+        context.bindings.outputEventHubMessage = JSON.stringify(processedPayload);
       });
     }
 
