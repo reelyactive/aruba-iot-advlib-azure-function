@@ -4,9 +4,9 @@
  */
 
 
+// advlib dependencies (from npm) and protocol-specific settings
+// See: https://github.com/reelyactive/advlib
 const advlib = require('advlib');
-
-
 const BLE_PROCESSORS = [
     { processor: require('advlib-ble'),
       libraries: [ require('advlib-ble-services'),
@@ -23,6 +23,11 @@ const ENOCEAN_PROCESSORS = [
 const INTERPRETERS = [ require('advlib-interoperable') ];
 
 
+/**
+ * Process IoT Hub Messages from Aruba APs.
+ * @param {Object} context The Azure Function context.
+ * @param {Array} IoTHubMessages The array of messages from the IoT Hub.
+ */
 module.exports = function(context, IoTHubMessages) {
   IoTHubMessages.forEach(messageString => {
     let message = JSON.parse(messageString);
