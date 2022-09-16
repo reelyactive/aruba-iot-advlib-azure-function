@@ -2,7 +2,7 @@
   "bindings": [
     {
       "type": "eventHubTrigger",
-      "name": "IoTHubMessages",
+      "name": "iotHubMessages",
       "direction": "in",
       "eventHubName": "%aruba_iot_event_hub_name%",
       "connection": "EventHubConnectionString",

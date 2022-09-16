@@ -53,10 +53,10 @@ const DEFAULT_DYNAMB_PROPERTIES = [
 /**
  * Process IoT Hub Messages from Aruba APs.
  * @param {Object} context The Azure Function context.
- * @param {Array} IoTHubMessages The array of messages from the IoT Hub.
+ * @param {Array} iotHubMessages The array of messages from the IoT Hub.
  */
-module.exports = function(context, IoTHubMessages) {
-  IoTHubMessages.forEach(messageString => {
+module.exports = function(context, iotHubMessages) {
+  iotHubMessages.forEach(messageString => {
     let message = JSON.parse(messageString);
 
     // Handle bleData
