@@ -97,20 +97,21 @@ module.exports = function(context, iotHubMessages) {
  * @return {Array} The compiled dynamb objects.
  */
 function processBleData(packets, properties, timestamp) {
-  let dynambs = [];
+  let deviceId = properties.deviceIdentifier.replaceAll(':', '');
+  let deviceIdType = 2;
+  let payloads = [];
 
   packets.forEach(packet => {
-    let deviceId = properties.deviceIdentifier.replaceAll(':', '');
-    let deviceIdType = ((packet.macAddrType === 'public') ? 2 : 3);
-    let payload = Buffer.from(packet.data, 'base64');
-    let processedPayload = advlib.process(payload, BLE_PROCESSORS,
-                                          INTERPRETERS);
-
-    dynambs.push(compileDynamb(deviceId, deviceIdType, processedPayload,
-                               timestamp));
+    deviceIdType = ((packet.macAddrType === 'public') ? 2 : 3);
+    payloads.push(Buffer.from(packet.data, 'base64'));
   });
 
-  return dynambs;
+  let processedPayloads = advlib.process(payloads, BLE_PROCESSORS,
+                                         INTERPRETERS);
+  let dynamb = compileDynamb(deviceId, deviceIdType, processedPayloads,
+                             timestamp);
+
+  return [ dynamb ];
 }
 
 
