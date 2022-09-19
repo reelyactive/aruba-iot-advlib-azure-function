@@ -59,11 +59,12 @@ module.exports = function(context, iotHubMessages) {
   iotHubMessages.forEach((messageString, index) => {
     let message = JSON.parse(messageString);
     let properties = context.bindingData.propertiesArray[index];
+    let timestamp = Date.parse(context.bindingData.enqueuedTimeUtcArray[index]);
     let dynambs = [];
 
     // Handle bleData
     if(Array.isArray(message.bleData)) {
-      dynambs = processBleData(message.bleData, properties);
+      dynambs = processBleData(message.bleData, properties, timestamp);
     }
 
     // Handle serialData
@@ -71,7 +72,8 @@ module.exports = function(context, iotHubMessages) {
 
       // EnOcean USB dongle (TODO: differentiate serialDataNb & actionResults)
       if(properties.deviceIdentifier.startsWith('ENOCEAN_USB')) {
-        dynambs = processEnOceanSerialData(message.serialData, properties);
+        dynambs = processEnOceanSerialData(message.serialData, properties,
+                                           timestamp);
       }
 
     }
@@ -141,12 +143,13 @@ function processEnOceanSerialData(packets, properties) {
  * @param {String} deviceId The device identifier.
  * @param {Number} deviceIdType The type of device identifier (see raddec).
  * @param {Object} data The processed payload data of the device.
+ * @param {Number} timestamp The timestamp of the radio packet reception.
  * @return {Object} The compiled dynamb object.
  */
-function compileDynamb(deviceId, deviceIdType, data) {
+function compileDynamb(deviceId, deviceIdType, data, timestamp) {
   let dynamb = { deviceId: deviceId,
                  deviceIdType: deviceIdType,
-                 timestamp: Date.now() };
+                 timestamp: timestamp };
 
   for(const property in data) {
     if(DEFAULT_DYNAMB_PROPERTIES.includes(property)) {
