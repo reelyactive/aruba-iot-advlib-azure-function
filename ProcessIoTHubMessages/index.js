@@ -59,45 +59,81 @@ module.exports = function(context, iotHubMessages) {
   iotHubMessages.forEach((messageString, index) => {
     let message = JSON.parse(messageString);
     let properties = context.bindingData.propertiesArray[index];
+    let dynambs = [];
 
     // Handle bleData
     if(Array.isArray(message.bleData)) {
-      message.bleData.forEach(packet => {
-        let deviceId = properties.deviceIdentifier.replace(':', '');
-        let deviceIdType = ((packet.macAddrType === 'public') ? 2 : 3);
-        let payload = Buffer.from(packet.data, 'base64');
-        let processedPayload = advlib.process(payload, BLE_PROCESSORS,
-                                              INTERPRETERS);
-        let dynamb = compileDynamb(deviceId, deviceIdType, processedPayload);
-        context.bindings.outputEventHubMessage = JSON.stringify(dynamb);
-      });
+      dynambs = processBleData(message.bleData, properties);
     }
 
     // Handle serialData
-    if(Array.isArray(message.serialData)) {
+    else if(Array.isArray(message.serialData)) {
 
       // EnOcean USB dongle (TODO: differentiate serialDataNb & actionResults)
       if(properties.deviceIdentifier.startsWith('ENOCEAN_USB')) {
-        message.serialData.forEach(packet => {
-          let payload = Buffer.from(packet.data, 'base64');
-          let processedPayload = advlib.process(payload, ENOCEAN_PROCESSORS);
-
-          if(Array.isArray(processedPayload.deviceIds)) {
-            let deviceIdElements = processedPayload.deviceIds[0].split('/');
-            let deviceId = deviceIdElements[0];
-            let deviceIdType = parseInt(deviceIdElements[1]);
-            let dynamb = compileDynamb(deviceId, deviceIdType, processedPayload);
-            context.bindings.outputEventHubMessage = JSON.stringify(dynamb);
-          }
-        });
+        dynambs = processEnOceanSerialData(message.serialData, properties);
       }
 
     }
+
+    // Output the DYNamic AMBient data message(s)
+    dynambs.forEach(dynamb => {
+      context.bindings.outputEventHubMessage = JSON.stringify(dynamb);
+    });
 
   });
 
   context.done();
 };
+
+
+/**
+ * Process the given BLE data.
+ * @param {Array} packets The raw BLE packets.
+ * @param {Object} properties The Aruba IoT transport properties.
+ * @return {Array} The compiled dynamb objects.
+ */
+function processBleData(packets, properties) {
+  let dynambs = [];
+
+  packets.forEach(packet => {
+    let deviceId = properties.deviceIdentifier.replaceAll(':', '');
+    let deviceIdType = ((packet.macAddrType === 'public') ? 2 : 3);
+    let payload = Buffer.from(packet.data, 'base64');
+    let processedPayload = advlib.process(payload, BLE_PROCESSORS,
+                                          INTERPRETERS);
+
+    dynambs.push(compileDynamb(deviceId, deviceIdType, processedPayload));
+  });
+
+  return dynambs;
+}
+
+
+/**
+ * Process the given EnOcean serial data.
+ * @param {Array} packets The raw serial packets.
+ * @param {Object} properties The Aruba IoT transport properties.
+ * @return {Array} The compiled dynamb objects.
+ */
+function processEnOceanSerialData(packets, properties) {
+  let dynambs = [];
+
+  packets.forEach(packet => {
+    let payload = Buffer.from(packet.data, 'base64');
+    let processedPayload = advlib.process(payload, ENOCEAN_PROCESSORS);
+
+    if(Array.isArray(processedPayload.deviceIds)) {
+      let deviceIdElements = processedPayload.deviceIds[0].split('/');
+      let deviceId = deviceIdElements[0];
+      let deviceIdType = parseInt(deviceIdElements[1]);
+
+      dynambs.push(compileDynamb(deviceId, deviceIdType, processedPayload));
+    }
+  });
+
+  return dynambs;
+}
 
 
 /**
