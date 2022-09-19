@@ -93,9 +93,10 @@ module.exports = function(context, iotHubMessages) {
  * Process the given BLE data.
  * @param {Array} packets The raw BLE packets.
  * @param {Object} properties The Aruba IoT transport properties.
+ * @param {Number} timestamp The timestamp of the radio packet reception.
  * @return {Array} The compiled dynamb objects.
  */
-function processBleData(packets, properties) {
+function processBleData(packets, properties, timestamp) {
   let dynambs = [];
 
   packets.forEach(packet => {
@@ -105,7 +106,8 @@ function processBleData(packets, properties) {
     let processedPayload = advlib.process(payload, BLE_PROCESSORS,
                                           INTERPRETERS);
 
-    dynambs.push(compileDynamb(deviceId, deviceIdType, processedPayload));
+    dynambs.push(compileDynamb(deviceId, deviceIdType, processedPayload,
+                               timestamp));
   });
 
   return dynambs;
@@ -116,9 +118,10 @@ function processBleData(packets, properties) {
  * Process the given EnOcean serial data.
  * @param {Array} packets The raw serial packets.
  * @param {Object} properties The Aruba IoT transport properties.
+ * @param {Number} timestamp The timestamp of the radio packet reception.
  * @return {Array} The compiled dynamb objects.
  */
-function processEnOceanSerialData(packets, properties) {
+function processEnOceanSerialData(packets, properties, timestamp) {
   let dynambs = [];
 
   packets.forEach(packet => {
@@ -130,7 +133,8 @@ function processEnOceanSerialData(packets, properties) {
       let deviceId = deviceIdElements[0];
       let deviceIdType = parseInt(deviceIdElements[1]);
 
-      dynambs.push(compileDynamb(deviceId, deviceIdType, processedPayload));
+      dynambs.push(compileDynamb(deviceId, deviceIdType, processedPayload,
+                                 timestamp));
     }
   });
 
