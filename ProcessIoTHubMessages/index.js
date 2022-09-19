@@ -56,13 +56,14 @@ const DEFAULT_DYNAMB_PROPERTIES = [
  * @param {Array} iotHubMessages The array of messages from the IoT Hub.
  */
 module.exports = function(context, iotHubMessages) {
-  iotHubMessages.forEach(messageString => {
+  iotHubMessages.forEach((messageString, index) => {
     let message = JSON.parse(messageString);
+    let properties = context.bindingData.propertiesArray[index];
 
     // Handle bleData
     if(Array.isArray(message.bleData)) {
       message.bleData.forEach(packet => {
-        let deviceId = ''; // TODO: from properties
+        let deviceId = properties.deviceIdentifier.replace(':', '');
         let deviceIdType = ((packet.macAddrType === 'public') ? 2 : 3);
         let payload = Buffer.from(packet.data, 'base64');
         let processedPayload = advlib.process(payload, BLE_PROCESSORS,
@@ -74,18 +75,23 @@ module.exports = function(context, iotHubMessages) {
 
     // Handle serialData
     if(Array.isArray(message.serialData)) {
-      message.serialData.forEach(packet => {
-        let payload = Buffer.from(packet.data, 'base64');
-        let processedPayload = advlib.process(payload, ENOCEAN_PROCESSORS);
 
-        if(Array.isArray(processedPayload.deviceIds)) {
-          let deviceIdElements = processedPayload.deviceIds[0].split('/');
-          let deviceId = deviceIdElements[0];
-          let deviceIdType = parseInt(deviceIdElements[1]);
-          let dynamb = compileDynamb(deviceId, deviceIdType, processedPayload);
-          context.bindings.outputEventHubMessage = JSON.stringify(dynamb);
-        }
-      });
+      // EnOcean USB dongle (TODO: differentiate serialDataNb & actionResults)
+      if(properties.deviceIdentifier.startsWith('ENOCEAN_USB')) {
+        message.serialData.forEach(packet => {
+          let payload = Buffer.from(packet.data, 'base64');
+          let processedPayload = advlib.process(payload, ENOCEAN_PROCESSORS);
+
+          if(Array.isArray(processedPayload.deviceIds)) {
+            let deviceIdElements = processedPayload.deviceIds[0].split('/');
+            let deviceId = deviceIdElements[0];
+            let deviceIdType = parseInt(deviceIdElements[1]);
+            let dynamb = compileDynamb(deviceId, deviceIdType, processedPayload);
+            context.bindings.outputEventHubMessage = JSON.stringify(dynamb);
+          }
+        });
+      }
+
     }
 
   });
