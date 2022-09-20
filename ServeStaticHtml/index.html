@@ -8,7 +8,7 @@
           content="Dynamic Ambient Data Stream">
     <script>
       document.addEventListener("DOMContentLoaded", async function(event) {
-        const res = await fetch(`/api/NegotiateConnection?id=${1}`);
+        const res = await fetch(`/api/wsconnection?id=${1}`);
         const data = await res.json();
         const websocket = new WebSocket(data.url);
 
