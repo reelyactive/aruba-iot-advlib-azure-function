@@ -27,7 +27,10 @@ If running locally, a local.settings.json file should be included in the root fo
         "FUNCTIONS_WORKER_RUNTIME": "node",
         "AzureWebJobsStorage": "...",
         "EventHubConnectionString": "...",
-        "aruba_iot_event_hub_name": "..."
+        "WebPubSubConnectionString": "...",
+        "aruba_iot_event_hub_name": "...",
+        "raddec_dynamb_event_hub_name": "...",
+        "web_pub_sub_hub_name": "..."
       }
     }
 
