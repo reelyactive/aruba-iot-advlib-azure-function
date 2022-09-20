@@ -58,8 +58,9 @@ const DEFAULT_DYNAMB_PROPERTIES = [
 module.exports = function(context, iotHubMessages) {
   iotHubMessages.forEach((messageString, index) => {
     let message = JSON.parse(messageString);
+    let messageDate = context.bindingData.enqueuedTimeUtcArray[index];
     let properties = context.bindingData.propertiesArray[index];
-    let timestamp = Date.parse(context.bindingData.enqueuedTimeUtcArray[index]);
+    let timestamp = Date.parse(messageDate);
     let dynambs = [];
 
     // Handle bleData
@@ -80,7 +81,11 @@ module.exports = function(context, iotHubMessages) {
 
     // Output the DYNamic AMBient data message(s)
     dynambs.forEach(dynamb => {
-      context.bindings.outputEventHubMessage = JSON.stringify(dynamb);
+      let dynambString = JSON.stringify(dynamb);
+
+      context.bindings.outputEventHubMessage = dynambString;
+      context.bindings.actions = { actionName: "sendToAll",
+                                   data: dynambString };
     });
 
   });

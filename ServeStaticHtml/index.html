@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description"
+          content="Dynamic Ambient Data Stream">
+    <script>
+      document.addEventListener("DOMContentLoaded", async function(event) {
+        const res = await fetch(`/api/NegotiateConnection?id=${1}`);
+        const data = await res.json();
+        const websocket = new WebSocket(data.url);
+
+        websocket.onmessage = function onMessage(message) {
+          try { messagedisplay.textContent = message.data; }
+          catch(err) { console.error(err); }
+        };
+      });
+    </script>
+    <title> Dynamic Ambient Data Stream </title>
+  </head>
+  <body>
+    <p> Real-time dynamb events via WebSocket: </p>
+    <pre id="messagedisplay"></pre>
+  </body>
+</html>

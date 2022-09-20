@@ -16,6 +16,12 @@
       "eventHubName": "%raddec_dynamb_event_hub_name%",
       "connection": "EventHubSendAppSetting",
       "direction": "out"
+    },
+    {
+      "type": "webPubSub",
+      "name": "actions",
+      "hub": "%web_pub_sub_hub_name%",
+      "direction": "out"
     }
   ]
 }
