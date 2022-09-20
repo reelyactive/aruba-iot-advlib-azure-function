@@ -4,23 +4,14 @@
  */
 
 
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
 
-module.exports = function(context, req) {
-  let index = path.join(context.executionContext.functionDirectory,
-                        'index.html');
+module.exports = async function(context, req) {
+  let filePath = path.join(context.executionContext.functionDirectory,
+                           'index.html');
+  let htmlData = await fs.readFile(filePath, 'utf8');
 
-  fs.readFile(index, 'utf8', (err, data) => {
-    if(!err) {
-      context.res = {
-        headers: { "Content-Type": "text/html" },
-        body: data
-      };
-    }
-
-    context.done(err);
-  });
-
+  context.res = { headers: { "Content-Type": "text/html" }, body: htmlData };
 };
