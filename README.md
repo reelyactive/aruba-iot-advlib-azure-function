@@ -45,6 +45,16 @@ With the Azure CLI installed, run the __aruba-iot-advlib-azure-function__ locall
     func start
 
 
+Running on Azure
+----------------
+
+With the Azure CLI installed, push the __aruba-iot-advlib-azure-function__ to Azure with the following command:
+
+    func azure functionapp publish <APP_NAME>
+
+Initially, and anytime there are changes to local.settings.json, add the flag ```--publish-local-settings -i``` to the above.
+
+
 License
 -------
 
