@@ -11,6 +11,13 @@
       "dataType": "string"
     },
     {
+      "name": "deviceProfilesEnOcean",
+      "type": "blob",
+      "path": "deviceprofiles/enocean.json",
+      "connection": "AzureWebJobsStorage",
+      "direction": "in"
+    },
+    {
       "type": "eventHub",
       "name": "outputEventHubMessage",
       "eventHubName": "%raddec_dynamb_event_hub_name%",

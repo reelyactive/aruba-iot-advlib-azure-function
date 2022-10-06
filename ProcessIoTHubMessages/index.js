@@ -14,12 +14,12 @@ const BLE_PROCESSORS = [
       options: { isPayloadOnly: true,
                  indices: [ require('sniffypedia') ] } }
 ];
-const ENOCEAN_PROCESSORS = [
-    { processor: require('advlib-esp'),
-      libraries: [],
-      options: { ignoreProtocolOverhead: true,
-                 indices: [ require('sniffypedia') ] } }
-];
+const ENOCEAN_PROCESSOR = {
+    processor: require('advlib-esp'),
+    libraries: [ require('advlib-eep-vld') ],
+    options: { ignoreProtocolOverhead: true,
+               indices: [ require('sniffypedia') ] }
+};
 const INTERPRETERS = [ require('advlib-interoperable') ];
 
 
@@ -74,7 +74,7 @@ module.exports = function(context, iotHubMessages) {
       // EnOcean USB dongle (TODO: differentiate serialDataNb & actionResults)
       if(properties.deviceIdentifier.startsWith('ENOCEAN_USB')) {
         dynambs = processEnOceanSerialData(message.serialData, properties,
-                                           timestamp);
+                             timestamp, context.bindings.deviceProfilesEnOcean);
       }
 
     }
@@ -125,19 +125,25 @@ function processBleData(packets, properties, timestamp) {
  * @param {Array} packets The raw serial packets.
  * @param {Object} properties The Aruba IoT transport properties.
  * @param {Number} timestamp The timestamp of the radio packet reception.
+ * @param {Object} deviceProfiles The EnOcean device profiles with EEP types.
  * @return {Array} The compiled dynamb objects.
  */
-function processEnOceanSerialData(packets, properties, timestamp) {
+function processEnOceanSerialData(packets, properties, timestamp,
+                                  deviceProfiles) {
   let dynambs = [];
+  let processor = Object.assign({}, ENOCEAN_PROCESSOR);
+  processor.options.deviceProfiles = deviceProfiles;
 
   packets.forEach(packet => {
     let payload = Buffer.from(packet.data, 'base64');
-    let processedPayload = advlib.process(payload, ENOCEAN_PROCESSORS);
+    let processedPayload = advlib.process(payload, [ processor ]);
 
     if(Array.isArray(processedPayload.deviceIds)) {
       let deviceIdElements = processedPayload.deviceIds[0].split('/');
       let deviceId = deviceIdElements[0];
       let deviceIdType = parseInt(deviceIdElements[1]);
+
+      // TODO: update deviceProfiles when eepType is received in UTE telegram
 
       dynambs.push(compileDynamb(deviceId, deviceIdType, processedPayload,
                                  timestamp));
